@@ -36,8 +36,9 @@
   (if (not (input? node))
     node
     (let [[attributes free-form-attributes keys] (extract-attributes node :free-form/input)
-          {:keys [value-on error-on extra-error-keys]} free-form-attributes
-          on-change-fn #(on-change keys (extract-event-value %1))
+          {:keys [value-on error-on extra-error-keys value-extractor-fn]} free-form-attributes
+          value-extractor-fn (or value-extractor-fn extract-event-value)
+          on-change-fn #(on-change keys (value-extractor-fn %1))
           value-on     (or value-on (case (:type attributes)
                                       (:checkbox :radio) :checked
                                       :value))
